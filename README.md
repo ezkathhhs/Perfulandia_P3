@@ -79,9 +79,9 @@ Prueba en Postman en  el caso de la creación de un carrito de compras.
 
 | Nombre | Rol en el proyecto |
 | --- | --- |
-| Matias Loyola | Backend |
-| Constanza Cárdenas | Pruebas |
-| Claudio Aro | Base de Datos |
+| Matias Loyola | HateOAS |
+| Constanza Cárdenas | Pruebas Unitarias |
+| Claudio Aro | Swagger |
 
 ## 📂 Estructura del Repositorio
 
