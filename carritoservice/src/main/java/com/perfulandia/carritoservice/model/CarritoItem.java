@@ -1,46 +1,71 @@
 package com.perfulandia.carritoservice.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.math.BigDecimal; // Para manejar precios con precisión
+import java.math.BigDecimal;
 import lombok.Builder;
 
-@Entity // Esto significa que representa una tabla en la base de datos
-@Table(name = "carrito_items") // Nombre de la tabla en la base de datos
-@Data // Genera getters, setters, toString, equals, hashCode
-@NoArgsConstructor // Genera un constructor sin argumentos
-@AllArgsConstructor // Genera un constructor con todos los argumentos
+@Entity
+@Table(name = "carrito_items")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-
+@Schema(description = "Entidad que representa un ítem dentro de un carrito de compras")
 public class CarritoItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincremental por la BD
-
-    // Identificador único para cada ítem individual dentro de un carrito.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(
+            description = "ID único del ítem generado automáticamente",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
 
-    // Almacena el ID del producto al que el ítem del carrito hace referencia. (Este ID provendría de tu productoservice)
+    @Schema(
+            description = "ID del producto relacionado en el catálogo de productos",
+            example = "5",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private Long productoId;
 
-    // Almacena el nombre del producto
+    @Schema(
+            description = "Nombre del producto para mostrar en el carrito",
+            example = "Laptop HP",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private String nombreProducto;
 
-    // Representa cuántas unidades de este productoId específico se han agregado al carrito.
+    @Schema(
+            description = "Cantidad del producto en el carrito",
+            example = "2",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private Integer cantidad;
 
-    // Almacena el precio de una sola unidad del producto en el momento en que se agregó al carrito.
+    @Schema(
+            description = "Precio unitario del producto al momento de agregarlo al carrito",
+            example = "999.99",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private BigDecimal precioUnitario;
 
-    // Un CarritoItem pertenece a un solo Carrito.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carrito_id", nullable = false)
-
-    // Establece la relación con la entidad Carrito a la que pertenece este ítem.
+    @Schema(
+            description = "Carrito al que pertenece este ítem",
+            hidden = true
+    )
     private Carrito carrito;
 
-    // Metodo para calcular el subtotal de este item
+    @Schema(
+            description = "Calcula el subtotal multiplicando cantidad por precio unitario",
+            example = "1999.98",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     public BigDecimal getSubtotal() {
         if (precioUnitario == null || cantidad == null) {
             return BigDecimal.ZERO;

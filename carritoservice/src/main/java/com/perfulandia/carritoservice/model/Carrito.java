@@ -1,5 +1,6 @@
 package com.perfulandia.carritoservice.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,52 +12,79 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Entity // Esto significa que representa una tabla en la base de datos
-@Table(name = "carritos") // Nombre de la tabla en la base de datos
+@Entity
+@Table(name = "carritos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-// La clase carrito es la clase que contiene los carritos
+@Schema(description = "Entidad que representa un carrito de compras en el sistema")
 public class Carrito {
-
-    // ID autoincrementable para cada instancia de carrito
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(
+            description = "ID único del carrito generado automáticamente",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
 
-    // Almacena el ID del usuario al que pertenece este carrito. (Este ID provendría de tu usuarioservice.)
     @Column(unique = true, nullable = false)
+    @Schema(
+            description = "ID del usuario propietario del carrito",
+            example = "101",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private Long usuarioId;
 
-    // Contiene la lista de todos los productos individuales (como objetos CarritoItem) que el usuario ha agregado a este carrito.
     @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Schema(
+            description = "Lista de ítems contenidos en el carrito",
+            example = "[]"
+    )
     private List<CarritoItem> items = new ArrayList<>();
 
-    //Registra cuándo se creó el carrito.
     @CreationTimestamp
     @Column(updatable = false)
+    @Schema(
+            description = "Fecha y hora de creación del carrito",
+            example = "2023-01-01T10:00:00",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private LocalDateTime fechaCreacion;
 
-    // Registra la última vez que se modificó el carrito.
     @UpdateTimestamp
+    @Schema(
+            description = "Fecha y hora de la última actualización del carrito",
+            example = "2023-01-01T11:30:00",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private LocalDateTime fechaActualizacion;
 
-    // Métodos de utilidad para manejar los items
+    @Schema(
+            description = "Añade un nuevo ítem al carrito",
+            hidden = true
+    )
     public void addItem(CarritoItem item) {
         this.items.add(item);
         item.setCarrito(this);
     }
 
+    @Schema(
+            description = "Elimina un ítem del carrito por ID de producto",
+            hidden = true
+    )
     public void removeItemByProductoId(Long productoId) {
         this.items.removeIf(item -> item.getProductoId().equals(productoId));
     }
 
-    // Metodo para calcular el total del carrito
+    @Schema(
+            description = "Calcula el total del carrito sumando los subtotales de todos los ítems",
+            example = "1999.98",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     public BigDecimal getTotalCarrito() {
         return items.stream()
-                .map(CarritoItem::getSubtotal) // Usa el metodo getSubtotal de CarritoItem
-                .reduce(BigDecimal.ZERO, BigDecimal::add); // Suma todos los subtotales
+                .map(CarritoItem::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
