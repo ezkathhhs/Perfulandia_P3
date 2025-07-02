@@ -106,3 +106,9 @@ Prueba en Postman en  el caso de la creación de un carrito de compras.
 > 
 
 ---
+
+## Acceso a Swagger UI
+> http://localhost:8085/swagger-ui/index.html - USUARIO
+> http://localhost:8084/swagger-ui/index.html - PRODUCT
+> http://localhost:8083/swagger-ui/index.html - PEDIDO
+> http://localhost:8082/swagger-ui/index.html - CARRITO
